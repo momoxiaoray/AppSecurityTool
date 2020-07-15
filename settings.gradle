@@ -1,0 +1,3 @@
+include ':security_tool_lib'
+include ':app'
+rootProject.name = "AppSecurityTool"
