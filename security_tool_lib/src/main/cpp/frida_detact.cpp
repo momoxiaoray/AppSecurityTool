@@ -136,7 +136,6 @@ void *detect_frida_loop(void *p) {
     int ret;
     int i;
     while (mLoop) {
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FRIDA DETECTED START～～");
         /*
          * 1: Scan memory for treacherous strings!
          * We also provide our own implementations of open() and read() - see syscall.S
@@ -152,7 +151,7 @@ void *detect_frida_loop(void *p) {
             }
             if (num_found > 1) {
                 __android_log_print(ANDROID_LOG_VERBOSE, APPNAME,
-                                    "FRIDA DETECTED [1] - suspect string found in memory!");
+                                    "FRIDA DETECTED [2] - suspect string found in memory!");
                 if (callBack(env, jcallback, javaCallbackId) == 1)
                     break;
             }
@@ -163,18 +162,18 @@ void *detect_frida_loop(void *p) {
         /*
         * 2: Frida Server Detection.
         */
-        for (i = 0; i <= 65535; i++) {
+        for (i = 20000; i <= 30000; i++) {
             sock = socket(AF_INET, SOCK_STREAM, 0);
             sa.sin_port = htons(i);
             if (connect(sock, (struct sockaddr *) &sa, sizeof sa) != -1) {
                 memset(res, 0, 7);
                 send(sock, "\x00", 1, NULL);
                 send(sock, "AUTH\r\n", 6, NULL);
-                usleep(100); // Give it some time to answer
+                usleep(500); // Give it some time to answer
                 if ((ret = recv(sock, res, 6, MSG_DONTWAIT)) != -1) {
                     if (strcmp(res, "REJECT") == 0) {
                         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME,
-                                            "FRIDA DETECTED [2] - frida server running on port %d!",
+                                            "FRIDA DETECTED [1] - frida server running on port %d!",
                                             i);
                         if (callBack(env, jcallback, javaCallbackId) == 1)
                             break;
@@ -183,7 +182,7 @@ void *detect_frida_loop(void *p) {
             }
             close(sock);
         }
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FRIDA DETECTED END～～");
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FRIDA DETECTED CHECKED ～～");
         sleep(3);
     }
 }
