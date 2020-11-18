@@ -6,8 +6,8 @@
 
 static const char *app_packageName = "com.dmc.demo";
 static const int app_signature_hash_code = 1967296062;
-static const uint8_t AES_KEY[] = "imccpzx,qwertyui";
-static const uint8_t AES_IV[] = "imccpzx,qwertyui";
+static const uint8_t AES_KEY[] = "123";
+static const uint8_t AES_IV[] = "123";
 static const string PWD_MD5_KEY = "123456";
 
 static jobject getApplication(JNIEnv *env) {

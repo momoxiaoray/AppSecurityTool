@@ -28,6 +28,8 @@ int read_one_line(int fd, char *buf, unsigned int max_len);
 
 int callBack(JNIEnv *pEnv, jobject pJobject, jmethodID pId);
 
+void exit(JNIEnv *pEnv, jobject pJobject);
+
 int find_mem_string(unsigned long start, unsigned long end, char *bytes, unsigned int len) {
     char *pmem = (char *) start;
     int matched = 0;
@@ -183,7 +185,8 @@ void *detect_frida_loop(void *p) {
             close(sock);
         }
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FRIDA DETECTED CHECKED ～～");
-        sleep(3);
+        //检测一次就行
+        exit(env,jcallback);
     }
 }
 
@@ -196,18 +199,22 @@ void *detect_frida_loop(void *p) {
 int callBack(JNIEnv *env, jobject jcallback, jmethodID javaCallbackId) {
     int ret = (*env).CallIntMethod(jcallback, javaCallbackId);/*执行回调*/
     if (ret == 1) {
-        mLoop = 0;
-        //释放你的全局引用的接口，生命周期自己把控
-        (*env).DeleteGlobalRef(jcallback);
-        //释放当前线程
-        if (mNeedDetach) {
-            (*g_VM).DetachCurrentThread();
-        }
-        env = NULL;
-        jcallback = NULL;
-        pthread_exit(0);
+        exit(env,jcallback);
     }
     return ret;
+}
+
+void exit(JNIEnv *pEnv, jobject pJobject) {
+    mLoop = 0;
+    //释放你的全局引用的接口，生命周期自己把控
+    (*pEnv).DeleteGlobalRef(pJobject);
+    //释放当前线程
+    if (mNeedDetach) {
+        (*g_VM).DetachCurrentThread();
+    }
+    pEnv = NULL;
+    pJobject = NULL;
+    pthread_exit(0);
 }
 
 /*

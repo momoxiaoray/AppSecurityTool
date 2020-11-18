@@ -21,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         hello = findViewById(R.id.hello);
         String str = "12312312jlkajsdlkasjdklasjd";
+        String encryptStr="AHL/+CtVvcaXf+//";
         String encrypt = JNIAESTool.encrypt(str);
-        hello.setText(String.format("原文：%s\n加密：%s \n解密:%s", str, encrypt, JNIAESTool.decrypt(encrypt)));
+//        hello.setText(String.format("原文：%s\n加密：%s \n解密:%s", str, encrypt, JNIAESTool.decrypt(encryptStr)));
         //检测FridaHook
         JNIFridaDetectTool.getInstance().fridaDetect(new JNIFridaDetectTool.OnFridaDetectListener() {
             @Override
