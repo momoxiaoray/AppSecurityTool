@@ -186,7 +186,9 @@ void *detect_frida_loop(void *p) {
         }
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FRIDA DETECTED CHECKED ～～");
         //检测一次就行
-        exit(env,jcallback);
+        //exit(env,jcallback);
+        //循环检测
+        sleep(1000);
     }
 }
 
